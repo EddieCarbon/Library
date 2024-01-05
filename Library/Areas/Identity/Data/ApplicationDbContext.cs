@@ -7,19 +7,44 @@ namespace Library.Areas.Identity.Data;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
+        
     }
+    
+    public DbSet<Book> Books { get; set; }
+    public DbSet<Author> Authors { get; set; }
+    public DbSet<Publisher> Publishers { get; set; }
+    public DbSet<Loan> Loans { get; set; }
+    public DbSet<Reader> Readers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        // Customize the ASP.NET Identity model and override the defaults if needed.
-        // For example, you can rename the ASP.NET Identity table names and more.
-        // Add your customizations after calling base.OnModelCreating(builder);
-
+        
+        // Configure Identity
         builder.ApplyConfiguration(new ApplicationUserConfiguration());
+
+        // Configure Library Entities
+        builder.Entity<Book>()
+            .HasOne(b => b.Author)
+            .WithMany(a => a.Books)
+            .HasForeignKey(b => b.AuthorId);
+
+        builder.Entity<Book>()
+            .HasOne(b => b.Publisher)
+            .WithMany(p => p.Books)
+            .HasForeignKey(b => b.PublisherId);
+
+        builder.Entity<Loan>()
+            .HasOne(l => l.Book)
+            .WithMany(b => b.Loans)
+            .HasForeignKey(l => l.BookId);
+
+        builder.Entity<Loan>()
+            .HasOne(l => l.Reader)
+            .WithMany(r => r.Loans)
+            .HasForeignKey(l => l.ReaderId);
     }
 }
 
