@@ -3,7 +3,7 @@
 
 #nullable disable
 
-using Library.Areas.Identity.Data;
+using Library.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;

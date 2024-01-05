@@ -1,4 +1,5 @@
 using Library.Areas.Identity.Data;
+using Library.Models;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
