@@ -1,12 +1,11 @@
-namespace Library.Models
-{
-    public class Author
-    {
-        public int AuthorId { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+namespace Library.Models;
 
-        // Navigation Properties
-        public ICollection<Book> Books { get; set; }
-    }
+public class Author
+{
+    public int AuthorId { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+
+    // Navigation Properties
+    public ICollection<Book> Books { get; set; }
 }
