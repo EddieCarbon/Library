@@ -81,11 +81,15 @@ public class LoginModel : PageModel
                 return Page();
             }
             
-            // var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, false);
             var result = await _signInManager.CheckPasswordSignInAsync(user, Input.Password, false);
             if (result.Succeeded)
             {
-                await _signInManager.SignInWithClaimsAsync(user, Input.RememberMe, new Claim[] { new Claim("amr", "pwd") });
+                var claims = new Claim[]
+                {
+                    new Claim("amr", "pwd"),
+                };
+                
+                await _signInManager.SignInWithClaimsAsync(user, Input.RememberMe, claims);
                 
                 _logger.LogInformation("User logged in.");
                 return LocalRedirect(returnUrl);
@@ -95,7 +99,6 @@ public class LoginModel : PageModel
                 _logger.LogInformation("User logged in.");
                 return LocalRedirect(returnUrl);
             }
-
             if (result.RequiresTwoFactor)
                 return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, Input.RememberMe });
             if (result.IsLockedOut)

@@ -62,6 +62,12 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+#region Authorization
+
+AddAuthorizationPolicies(builder.Services);
+
+#endregion
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -91,3 +97,12 @@ app.MapControllerRoute(
     pattern: "api/{controller=Books}/{action=Index}/{id?}");
 
 app.Run();
+
+
+void AddAuthorizationPolicies(IServiceCollection services)
+{
+    services.AddAuthorization(options =>
+    {
+        options.AddPolicy("EmployeeOnly", policy => policy.RequireClaim("EmployeeNumber"));
+    });
+}
