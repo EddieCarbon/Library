@@ -7,6 +7,9 @@ namespace Library.Models
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+
+        // Navigation Property
+        public ICollection<Loan> Loans { get; set; }
     }
     
     public class ApplicationRole : IdentityRole

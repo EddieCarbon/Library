@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Library.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240109182855_Init")]
-    partial class Init
+    [Migration("20240109215411_RemoveReader")]
+    partial class RemoveReader
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -97,6 +97,44 @@ namespace Library.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "1fe86725-cad1-4ab2-94c7-5f95f31f5237",
+                            Email = "admin@example.com",
+                            EmailConfirmed = true,
+                            FirstName = "Admin",
+                            LastName = "User",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@EXAMPLE.COM",
+                            NormalizedUserName = "ADMIN@EXAMPLE.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEPQw1Lj0RTvh3tf3gF/Qc5HuO413cnAPafmz5CbXy6HIfz8QlgF/AfK5VAX3hegHrQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "",
+                            TwoFactorEnabled = false,
+                            UserName = "admin@example.com"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "05043b4c-04b1-4023-8212-3444d4ecb2fb",
+                            Email = "manager@example.com",
+                            EmailConfirmed = true,
+                            FirstName = "Manager",
+                            LastName = "User",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "manager@EXAMPLE.COM",
+                            NormalizedUserName = "MANAGER@EXAMPLE.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAENe2pKPjWPzxb7EzkGg8Q9fH4+kZK/vcswkIRA3v8+gP9QpbfMgJaZqpnKkEpLrX/Q==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "",
+                            TwoFactorEnabled = false,
+                            UserName = "manager@example.com"
+                        });
                 });
 
             modelBuilder.Entity("Library.Models.Author", b =>
@@ -161,17 +199,18 @@ namespace Library.Migrations
                     b.Property<DateTime>("LoanDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ReaderId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("ReturnDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("LoanId");
 
                     b.HasIndex("BookId");
 
-                    b.HasIndex("ReaderId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Loans");
                 });
@@ -191,27 +230,6 @@ namespace Library.Migrations
                     b.HasKey("PublisherId");
 
                     b.ToTable("Publishers");
-                });
-
-            modelBuilder.Entity("Library.Models.Reader", b =>
-                {
-                    b.Property<int>("ReaderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReaderId"), 1L, 1);
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ReaderId");
-
-                    b.ToTable("Readers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -239,6 +257,22 @@ namespace Library.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            ConcurrencyStamp = "18c4e1eb-3fba-4e0e-9176-a605c1eb6530",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            ConcurrencyStamp = "2251e415-d10c-4d4d-affe-32e8ab39f83d",
+                            Name = "Manager",
+                            NormalizedName = "MANAGER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -328,6 +362,18 @@ namespace Library.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "1",
+                            RoleId = "1"
+                        },
+                        new
+                        {
+                            UserId = "2",
+                            RoleId = "2"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -378,15 +424,15 @@ namespace Library.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Library.Models.Reader", "Reader")
+                    b.HasOne("Library.Models.ApplicationUser", "User")
                         .WithMany("Loans")
-                        .HasForeignKey("ReaderId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Book");
 
-                    b.Navigation("Reader");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -440,6 +486,11 @@ namespace Library.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Library.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("Loans");
+                });
+
             modelBuilder.Entity("Library.Models.Author", b =>
                 {
                     b.Navigation("Books");
@@ -453,11 +504,6 @@ namespace Library.Migrations
             modelBuilder.Entity("Library.Models.Publisher", b =>
                 {
                     b.Navigation("Books");
-                });
-
-            modelBuilder.Entity("Library.Models.Reader", b =>
-                {
-                    b.Navigation("Loans");
                 });
 #pragma warning restore 612, 618
         }

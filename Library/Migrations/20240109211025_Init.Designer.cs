@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Library.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240109204538_SeedRoles")]
-    partial class SeedRoles
+    [Migration("20240109211025_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -103,7 +103,7 @@ namespace Library.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4e6469c5-5ced-422f-98cf-fc7dcea446ac",
+                            ConcurrencyStamp = "0df4a4b1-b904-4a46-a6b6-970ab0672207",
                             Email = "admin@example.com",
                             EmailConfirmed = true,
                             FirstName = "Admin",
@@ -111,7 +111,7 @@ namespace Library.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@EXAMPLE.COM",
                             NormalizedUserName = "ADMIN@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEGcNr0ZIvReyxk7+q0Gg/xd/kMpXuYy2WcGCHqDGwyuBr8je2hHiwsuhsrFjWbuR/A==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEBlQOnXaXIraefi25n8K4iF74bn2iCbJj3Gkw1Sr0v2w1n7IqmZ2YdmvxdYFJKhwEg==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -121,7 +121,7 @@ namespace Library.Migrations
                         {
                             Id = "2",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "5d34b841-2ad0-494c-9957-ac757f7906d7",
+                            ConcurrencyStamp = "0ff1d0d4-b128-47d1-b039-e2cdf48ecce4",
                             Email = "manager@example.com",
                             EmailConfirmed = true,
                             FirstName = "Manager",
@@ -129,7 +129,7 @@ namespace Library.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "manager@EXAMPLE.COM",
                             NormalizedUserName = "MANAGER@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEO33JR/s9I2FcbfmedHFWVNxHlcAetKuij1V7C4pV2KSwdw0PRdlI/9D6EfEv8j/lQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEDndW3EVkke9USkIihgartVSQv3LpQxDdxSEg5QHL5xmFU1sozXt4wCIfZpyWTSZyQ==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -247,7 +247,14 @@ namespace Library.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("ReaderId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Readers");
                 });
@@ -282,14 +289,14 @@ namespace Library.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "01fb58ca-bb87-4e77-9be1-07f2621786cc",
+                            ConcurrencyStamp = "6b8396d2-ee66-4a1c-8ac3-aa7c93d4bf65",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "b039bfd1-70c1-4f4e-bc50-f1865b49ccae",
+                            ConcurrencyStamp = "50ac36f4-39f8-4661-a749-ec92b22db515",
                             Name = "Manager",
                             NormalizedName = "MANAGER"
                         });
@@ -455,6 +462,17 @@ namespace Library.Migrations
                     b.Navigation("Reader");
                 });
 
+            modelBuilder.Entity("Library.Models.Reader", b =>
+                {
+                    b.HasOne("Library.Models.ApplicationUser", "User")
+                        .WithOne("Reader")
+                        .HasForeignKey("Library.Models.Reader", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -503,6 +521,12 @@ namespace Library.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Library.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("Reader")
                         .IsRequired();
                 });
 

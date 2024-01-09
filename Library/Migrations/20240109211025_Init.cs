@@ -78,20 +78,6 @@ namespace Library.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Readers",
-                columns: table => new
-                {
-                    ReaderId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Readers", x => x.ReaderId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -198,6 +184,27 @@ namespace Library.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Readers",
+                columns: table => new
+                {
+                    ReaderId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Readers", x => x.ReaderId);
+                    table.ForeignKey(
+                        name: "FK_Readers_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Books",
                 columns: table => new
                 {
@@ -251,6 +258,34 @@ namespace Library.Migrations
                         principalColumn: "ReaderId",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "1", "6b8396d2-ee66-4a1c-8ac3-aa7c93d4bf65", "Admin", "ADMIN" },
+                    { "2", "50ac36f4-39f8-4661-a749-ec92b22db515", "Manager", "MANAGER" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[,]
+                {
+                    { "1", 0, "0df4a4b1-b904-4a46-a6b6-970ab0672207", "admin@example.com", true, "Admin", "User", false, null, "ADMIN@EXAMPLE.COM", "ADMIN@EXAMPLE.COM", "AQAAAAEAACcQAAAAEBlQOnXaXIraefi25n8K4iF74bn2iCbJj3Gkw1Sr0v2w1n7IqmZ2YdmvxdYFJKhwEg==", null, false, "", false, "admin@example.com" },
+                    { "2", 0, "0ff1d0d4-b128-47d1-b039-e2cdf48ecce4", "manager@example.com", true, "Manager", "User", false, null, "manager@EXAMPLE.COM", "MANAGER@EXAMPLE.COM", "AQAAAAEAACcQAAAAEDndW3EVkke9USkIihgartVSQv3LpQxDdxSEg5QHL5xmFU1sozXt4wCIfZpyWTSZyQ==", null, false, "", false, "manager@example.com" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[] { "1", "1" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[] { "2", "2" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -310,6 +345,12 @@ namespace Library.Migrations
                 name: "IX_Loans_ReaderId",
                 table: "Loans",
                 column: "ReaderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Readers_UserId",
+                table: "Readers",
+                column: "UserId",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -336,9 +377,6 @@ namespace Library.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "Books");
 
             migrationBuilder.DropTable(
@@ -349,6 +387,9 @@ namespace Library.Migrations
 
             migrationBuilder.DropTable(
                 name: "Publishers");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
         }
     }
 }

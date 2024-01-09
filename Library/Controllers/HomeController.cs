@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Library.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Library.Controllers;
 
@@ -18,6 +19,7 @@ public class HomeController : Controller
         return View();
     }
 
+    [Authorize(Roles = "Admin")]
     public IActionResult Privacy()
     {
         return View();

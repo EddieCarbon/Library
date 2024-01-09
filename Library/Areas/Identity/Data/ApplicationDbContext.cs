@@ -16,7 +16,6 @@ namespace Library.Areas.Identity.Data
         public DbSet<Author> Authors { get; set; }
         public DbSet<Publisher> Publishers { get; set; }
         public DbSet<Loan> Loans { get; set; }
-        public DbSet<Reader> Readers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -27,9 +26,9 @@ namespace Library.Areas.Identity.Data
 
             // Configure Library Entities
             builder.Entity<Book>()
-                .HasOne(b => b.Author)
-                .WithMany(a => a.Books)
-                .HasForeignKey(b => b.AuthorId);
+               .HasOne(b => b.Author)
+               .WithMany(a => a.Books)
+               .HasForeignKey(b => b.AuthorId);
 
             builder.Entity<Book>()
                 .HasOne(b => b.Publisher)
@@ -42,9 +41,9 @@ namespace Library.Areas.Identity.Data
                 .HasForeignKey(l => l.BookId);
 
             builder.Entity<Loan>()
-                .HasOne(l => l.Reader)
-                .WithMany(r => r.Loans)
-                .HasForeignKey(l => l.ReaderId);
+                .HasOne(l => l.User)
+                .WithMany(u => u.Loans)
+                .HasForeignKey(l => l.UserId);
 
             // Add roles to database
             builder.Entity<IdentityRole>().HasData(

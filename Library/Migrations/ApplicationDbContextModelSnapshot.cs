@@ -101,7 +101,7 @@ namespace Library.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4e6469c5-5ced-422f-98cf-fc7dcea446ac",
+                            ConcurrencyStamp = "1fe86725-cad1-4ab2-94c7-5f95f31f5237",
                             Email = "admin@example.com",
                             EmailConfirmed = true,
                             FirstName = "Admin",
@@ -109,7 +109,7 @@ namespace Library.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@EXAMPLE.COM",
                             NormalizedUserName = "ADMIN@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEGcNr0ZIvReyxk7+q0Gg/xd/kMpXuYy2WcGCHqDGwyuBr8je2hHiwsuhsrFjWbuR/A==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEPQw1Lj0RTvh3tf3gF/Qc5HuO413cnAPafmz5CbXy6HIfz8QlgF/AfK5VAX3hegHrQ==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -119,7 +119,7 @@ namespace Library.Migrations
                         {
                             Id = "2",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "5d34b841-2ad0-494c-9957-ac757f7906d7",
+                            ConcurrencyStamp = "05043b4c-04b1-4023-8212-3444d4ecb2fb",
                             Email = "manager@example.com",
                             EmailConfirmed = true,
                             FirstName = "Manager",
@@ -127,7 +127,7 @@ namespace Library.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "manager@EXAMPLE.COM",
                             NormalizedUserName = "MANAGER@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEO33JR/s9I2FcbfmedHFWVNxHlcAetKuij1V7C4pV2KSwdw0PRdlI/9D6EfEv8j/lQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAENe2pKPjWPzxb7EzkGg8Q9fH4+kZK/vcswkIRA3v8+gP9QpbfMgJaZqpnKkEpLrX/Q==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -197,17 +197,18 @@ namespace Library.Migrations
                     b.Property<DateTime>("LoanDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ReaderId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("ReturnDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("LoanId");
 
                     b.HasIndex("BookId");
 
-                    b.HasIndex("ReaderId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Loans");
                 });
@@ -227,27 +228,6 @@ namespace Library.Migrations
                     b.HasKey("PublisherId");
 
                     b.ToTable("Publishers");
-                });
-
-            modelBuilder.Entity("Library.Models.Reader", b =>
-                {
-                    b.Property<int>("ReaderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReaderId"), 1L, 1);
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ReaderId");
-
-                    b.ToTable("Readers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -280,14 +260,14 @@ namespace Library.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "01fb58ca-bb87-4e77-9be1-07f2621786cc",
+                            ConcurrencyStamp = "18c4e1eb-3fba-4e0e-9176-a605c1eb6530",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "b039bfd1-70c1-4f4e-bc50-f1865b49ccae",
+                            ConcurrencyStamp = "2251e415-d10c-4d4d-affe-32e8ab39f83d",
                             Name = "Manager",
                             NormalizedName = "MANAGER"
                         });
@@ -442,15 +422,15 @@ namespace Library.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Library.Models.Reader", "Reader")
+                    b.HasOne("Library.Models.ApplicationUser", "User")
                         .WithMany("Loans")
-                        .HasForeignKey("ReaderId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Book");
 
-                    b.Navigation("Reader");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -504,6 +484,11 @@ namespace Library.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Library.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("Loans");
+                });
+
             modelBuilder.Entity("Library.Models.Author", b =>
                 {
                     b.Navigation("Books");
@@ -517,11 +502,6 @@ namespace Library.Migrations
             modelBuilder.Entity("Library.Models.Publisher", b =>
                 {
                     b.Navigation("Books");
-                });
-
-            modelBuilder.Entity("Library.Models.Reader", b =>
-                {
-                    b.Navigation("Loans");
                 });
 #pragma warning restore 612, 618
         }

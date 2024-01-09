@@ -8,4 +8,8 @@ public class Reader
 
     // Navigation Properties
     public ICollection<Loan> Loans { get; set; }
+
+    // Foreign key to AspNetUsers table
+    public string UserId { get; set; }
+    public ApplicationUser User { get; set; }
 }
