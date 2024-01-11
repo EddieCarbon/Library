@@ -7,7 +7,9 @@
 <h2>Book Manager</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Create New Book</a> |
+    <a asp-action="CreateAuthor">Create New Author</a> |
+    <a asp-action="CreatePublisher">Create New Publisher</a>
 </p>
 
 <table class="table">
@@ -40,7 +42,6 @@
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.BookId">Edit</a> |
-                @* <a asp-action="Details" asp-route-id="@item.BookId">Details</a> | *@
                 <a asp-action="Delete" asp-route-id="@item.BookId">Delete</a>
             </td>
         </tr>

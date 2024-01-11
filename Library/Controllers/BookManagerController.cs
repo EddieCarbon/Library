@@ -1,10 +1,10 @@
+using Library.Areas.Identity.Data;
+using Library.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Library.Areas.Identity.Data;
-using Library.Models;
-using System.Linq;
-using System.Threading.Tasks;
+
+namespace Library.Controllers;
 
 [Authorize(Roles = "Admin,Manager")]
 public class BookManagerController : Controller
@@ -119,6 +119,46 @@ public class BookManagerController : Controller
         _context.Books.Remove(book);
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
+    }
+    
+    // GET: BookManager/CreateAuthor
+    public IActionResult CreateAuthor()
+    {
+        return View();
+    }
+
+    // POST: BookManager/CreateAuthor
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateAuthor([Bind("FirstName,LastName")] Author author)
+    {
+        if (ModelState.IsValid)
+        {
+            _context.Add(author);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        return View(author);
+    }
+
+    // GET: BookManager/CreatePublisher
+    public IActionResult CreatePublisher()
+    {
+        return View();
+    }
+
+    // POST: BookManager/CreatePublisher
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreatePublisher([Bind("Name")] Publisher publisher)
+    {
+        if (ModelState.IsValid)
+        {
+            _context.Add(publisher);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        return View(publisher);
     }
 
     private bool BookExists(int id)

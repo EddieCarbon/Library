@@ -37,17 +37,6 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// app.MapControllerRoute(
-//     "default",
-//     "{controller=Home}/{action=Index}/{id?}");
-//
-// app.MapRazorPages();
-//
-// // Additional configuration for API CRUD
-// app.MapControllerRoute(
-//     name: "api",
-//     pattern: "api/{controller=Books}/{action=Index}/{id?}");
-
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
@@ -70,8 +59,7 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-
-        // Sprawd�, czy istniej� u�ytkownicy o id "1" i "2" w bazie danych
+        
         var user1 = userManager.FindByIdAsync("1").Result;
         var user2 = userManager.FindByIdAsync("2").Result;
 
@@ -94,22 +82,18 @@ void SeedData(ApplicationDbContext context, ApplicationUser user1, ApplicationUs
 {
     if (!context.Books.Any())
     {
-        // Dodaj przykladowe autory
         var author1 = new Author { FirstName = "John", LastName = "Doe" };
         var author2 = new Author { FirstName = "Jane", LastName = "Smith" };
         context.Authors.AddRange(author1, author2);
-
-        // Dodaj przykladowe wydawnictwa
+        
         var publisher1 = new Publisher { Name = "ABC Publications" };
         var publisher2 = new Publisher { Name = "XYZ Books" };
         context.Publishers.AddRange(publisher1, publisher2);
 
-        // Dodaj przykladowe ksiazki
         var book1 = new Book { Title = "Book 1", Author = author1, Publisher = publisher1 };
         var book2 = new Book { Title = "Book 2", Author = author2, Publisher = publisher2 };
         context.Books.AddRange(book1, book2);
-
-        // Dodaj przykladowe wypo�yczenia z uzyciem istniejacych uzytkownikow
+        
         var loan1 = new Loan { Book = book1, User = user1, LoanDate = DateTime.Now, ReturnDate = DateTime.Now.AddDays(14) };
         var loan2 = new Loan { Book = book2, User = user2, LoanDate = DateTime.Now, ReturnDate = DateTime.Now.AddDays(21) };
         context.Loans.AddRange(loan1, loan2);
