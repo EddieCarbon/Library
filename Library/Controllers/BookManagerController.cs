@@ -19,7 +19,11 @@ public class BookManagerController : Controller
     // GET: BookManager
     public async Task<IActionResult> Index()
     {
-        var books = await _context.Books.ToListAsync();
+        var books = await _context.Books
+            .Include(b => b.Author)
+            .Include(b => b.Publisher)
+            .ToListAsync();
+
         return View(books);
     }
 
@@ -29,18 +33,30 @@ public class BookManagerController : Controller
         return View();
     }
 
-    // POST: BookManager/Create
+    //// POST: BookManager/Create
+    //[HttpPost]
+    //[ValidateAntiForgeryToken]
+    //public async Task<IActionResult> Create([Bind("Title,AuthorId,PublisherId")] Book book)
+    //{
+    //    if (ModelState.IsValid)
+    //    {
+    //        _context.Add(book);
+    //        await _context.SaveChangesAsync();
+    //        return RedirectToAction(nameof(Index));
+    //    }
+    //    return View(book);
+    //}
+
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Title,Author,Publisher")] Book book)
+    public async Task<IActionResult> Create([Bind("Title,AuthorId,PublisherId")] Book book)
     {
-        if (ModelState.IsValid)
-        {
-            _context.Add(book);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-        return View(book);
+        book.Author = _context.Authors.Find(book.AuthorId);
+        book.Publisher = _context.Publishers.Find(book.PublisherId);
+
+        _context.Add(book);
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
     }
 
     // GET: BookManager/Edit/5
