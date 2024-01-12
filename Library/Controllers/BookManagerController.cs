@@ -64,6 +64,14 @@ public class BookManagerController : Controller
         var book = await _context.Books
                 .FirstOrDefaultAsync(m => m.BookId == id);
         
+        // Pobierz największe ID autora i wydawcy
+        int maxAuthorId = _context.Authors.Max(a => a.AuthorId);
+        int maxPublisherId = _context.Publishers.Max(p => p.PublisherId);
+        
+        // Przekaż te wartości do widoku
+        ViewBag.MaxAuthorId = maxAuthorId;
+        ViewBag.MaxPublisherId = maxPublisherId;
+        
         if (book == null)
         {
             return NotFound();
