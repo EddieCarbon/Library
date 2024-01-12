@@ -13,9 +13,9 @@
     - [Testowi Użytkownicy i Hasła](#testowi-użytkownicy-i-hasła)
 4. [Opis Działania Aplikacji](#opis-działania-aplikacji)
     - [Struktura Aplikacji](#struktura-aplikacji)
-    - [Katalogi](#katalogi)
-    - [Moduły](#moduły)
     - [Funkcje Główne](#funkcje-główne)
+    - [Moduły](#moduły)
+    - [Katalogi](#katalogi)
 
 # Wprowadzenie
 ## Cel Projektu
@@ -35,8 +35,10 @@ Sprawdź, czy masz zainstalowane wymagane oprogramowanie, takie jak .NET 6.X.X i
 ## Instrukcje Instalacji
 1. Sklonuj repozytorium z projektem.
    - `https://github.com/EddieCarbon/Library.git`
-3. Skonfiguruj Łańcuch Połączenia z Bazą Danych w pliku appsettings.json.
+2. Skonfiguruj Łańcuch Połączenia z Bazą Danych w pliku appsettings.json.
    - `cd Library`
+3. Używając konsoli menagera paczek NuGet utwórz bazę danych korzystając z migracji.
+   - `Update-Database` 
 5. Uruchom migracje bazy danych.
    - `dotnet run`
 
@@ -61,22 +63,13 @@ W pliku appsettings.json znajdziesz sekcję dotyczącą łańcucha połączenia 
 # Opis Działania Aplikacji
 
 ## Struktura Aplikacji
-Projekt "**Biblioteka Online**" został zorganizowany zgodnie z najlepszymi praktykami programowania i architektury oprogramowania. 
-Poniżej znajduje się struktura katalogów oraz krótki opis głównych modułów.
+Projekt "**Library**" został zorganizowany zgodnie z najlepszymi praktykami programowania i architektury oprogramowania. 
+- **Admin:** Ma dostęp do zakładki `Book Manager`. Może dodawać wydawców i autorów. Dodawać nowe książki, edytować je i usuwać.
+- **Manager:** Ma takie same uprawnienia jak admin
+- **Użytkownik zalogowany:** Może wypożyczać książki
+- **Użytkownik niezalogowany:** Może przeglądać dostępne książki w zakładce **Books**
 
-### Katalogi
-- **Controllers:** Zawiera kontrolery obsługujące żądania HTTP, odpowiedzialne za przetwarzanie danych i zarządzanie logiką biznesową.
-- **Data:** Katalog zawiera klasy kontekstu baz danych oraz konfiguracje encji.
-- **Models** Tutaj znajdują się klasy reprezentujące modele danych, czyli encje bazy danych.
-- **Views**: Zawiera pliki widoków, czyli interfejsu użytkownika, napisane w formacie Razor lub HTML.
-- **wwwroot:** Katalog ten przechowuje pliki statyczne, takie jak arkusze stylów CSS, skrypty JavaScript czy obrazy.
-- **Areas:** Dodatkowy katalog zawierający obszary aplikacji, gdzie każdy obszar może mieć swoje kontrolery, modele i widoki.
-
-### Moduły
-- **Books Manager:** Moduł odpowiedzialny za zarządzanie książkami, w tym dodawanie, edycję i usuwanie. Zawiera kontrolery, modele i widoki związane z zarządzaniem książkami.
-    - **Author & Publisher Management:** Moduł umożliwiający zarządzanie autorami i wydawnictwami. Zapewnia kontrolery, modele i widoki do edycji informacji na temat autorów i wydawnictw. 
-- **Home:** Moduł obsługujący wypożyczenia i rezerwacje użytkowników. Zapewnia funkcjonalność zarządzania wypożyczonymi książkami.
-
+    
 ## Funkcje Główne
 - ### Book Manager
     - **Dodawanie Książki:**
@@ -90,5 +83,20 @@ Poniżej znajduje się struktura katalogów oraz krótki opis głównych moduł�
     - **Rezerwacja Książki:**
         - Użytkownicy mogą rezerwować dostępne książki na swoje konto.
     - **Wypożyczanie Książki:**
-        - Funkcja wypożyczania książek dostępna jest dla zalogowanych użytkowników. 
+        - Funkcja wypożyczania książek dostępna jest dla zalogowanych użytkowników.
+
+### Moduły
+- **Books Manager:** Moduł odpowiedzialny za zarządzanie książkami, w tym dodawanie, edycję i usuwanie. Zawiera kontrolery, modele i widoki związane z zarządzaniem książkami.
+- **Author & Publisher Management:** Moduł umożliwiający zarządzanie autorami i wydawnictwami. Zapewnia kontrolery, modele i widoki do edycji informacji na temat autorów i wydawnictw. 
+- **Home:** Moduł obsługujący wypożyczenia i rezerwacje użytkowników. Zapewnia funkcjonalność zarządzania wypożyczonymi książkami.
+
+### Katalogi
+- **Controllers:** Zawiera kontrolery obsługujące żądania HTTP, odpowiedzialne za przetwarzanie danych i zarządzanie logiką biznesową.
+- **Data:** Katalog zawiera klasy kontekstu baz danych oraz konfiguracje encji.
+- **Models** Tutaj znajdują się klasy reprezentujące modele danych, czyli encje bazy danych.
+- **Views**: Zawiera pliki widoków, czyli interfejsu użytkownika, napisane w formacie Razor lub HTML.
+- **wwwroot:** Katalog ten przechowuje pliki statyczne, takie jak arkusze stylów CSS, skrypty JavaScript czy obrazy.
+- **Areas:** Dodatkowy katalog zawierający obszary aplikacji, gdzie każdy obszar może mieć swoje kontrolery, modele i widoki.
+
+ 
 
