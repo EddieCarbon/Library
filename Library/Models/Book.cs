@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Library.Models;
 
 public class Book
@@ -6,6 +8,8 @@ public class Book
     public string Title { get; set; }
     public int AuthorId { get; set; }
     public int PublisherId { get; set; }
+    [NotMapped]
+    public bool IsReservedByUser { get; set; }
 
     // Navigation Properties
     public Author Author { get; set; }

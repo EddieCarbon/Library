@@ -1,8 +1,55 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model List<Library.Models.Book>
+
+@{
+    ViewData["Title"] = "Book List";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h2>Book List</h2>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model[0].Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model[0].Author)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model[0].Publisher)
+        </th>
+        <th>
+            Reserved
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Author)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Publisher)
+            </td>
+            <td>
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    if (item.IsReservedByUser)
+                    {
+                        <span class="text-success">Reserved</span>
+                    }
+                    else
+                    {
+                        <a asp-action="Reserve" asp-route-id="@item.BookId">Reserve</a>
+                    }
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

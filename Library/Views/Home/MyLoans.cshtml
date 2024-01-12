@@ -1,0 +1,39 @@
+@model List<Library.Models.Loan>
+
+@{
+    ViewData["Title"] = "My Loans";
+}
+
+<h2>My Loans</h2>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model[0].Book.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model[0].LoanDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model[0].ReturnDate)
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Book.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LoanDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReturnDate)
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

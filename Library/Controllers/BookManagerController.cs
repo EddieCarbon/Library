@@ -23,7 +23,7 @@ public class BookManagerController : Controller
             .Include(b => b.Author)
             .Include(b => b.Publisher)
             .ToListAsync();
-
+        
         return View(books);
     }
 
@@ -33,30 +33,24 @@ public class BookManagerController : Controller
         return View();
     }
 
-    //// POST: BookManager/Create
-    //[HttpPost]
-    //[ValidateAntiForgeryToken]
-    //public async Task<IActionResult> Create([Bind("Title,AuthorId,PublisherId")] Book book)
-    //{
-    //    if (ModelState.IsValid)
-    //    {
-    //        _context.Add(book);
-    //        await _context.SaveChangesAsync();
-    //        return RedirectToAction(nameof(Index));
-    //    }
-    //    return View(book);
-    //}
-
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([Bind("Title,AuthorId,PublisherId")] Book book)
     {
         book.Author = _context.Authors.Find(book.AuthorId);
         book.Publisher = _context.Publishers.Find(book.PublisherId);
-
-        _context.Add(book);
-        await _context.SaveChangesAsync();
-        return RedirectToAction(nameof(Index));
+        try {
+            _context.Add(book);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        catch (DbUpdateException)
+        {
+            ModelState.AddModelError("", "Unable to save changes. " +
+                                         "Try again, and if the problem persists " +
+                                         "see your system administrator.");
+        }
+        return View(book);
     }
 
     // GET: BookManager/Edit/5
@@ -66,8 +60,12 @@ public class BookManagerController : Controller
         {
             return NotFound();
         }
-
-        var book = await _context.Books.FindAsync(id);
+        
+        var book = await _context.Books
+                .Include(b => b.Author)
+                .Include(b => b.Publisher)
+                .FirstOrDefaultAsync(m => m.BookId == id);
+        
         if (book == null)
         {
             return NotFound();
@@ -85,27 +83,20 @@ public class BookManagerController : Controller
             return NotFound();
         }
 
-        if (ModelState.IsValid)
+        try
         {
-            try
-            {
-                _context.Update(book);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BookExists(book.BookId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-            return RedirectToAction(nameof(Index));
+            _context.Update(book);
+            await _context.SaveChangesAsync();
         }
-        return View(book);
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!BookExists(book.BookId))
+            {
+                return NotFound();
+            }
+            throw;
+        }
+        return RedirectToAction(nameof(Index));
     }
 
     // GET: BookManager/Delete/5
@@ -117,7 +108,10 @@ public class BookManagerController : Controller
         }
 
         var book = await _context.Books
+            .Include(b => b.Author)
+            .Include(b => b.Publisher)
             .FirstOrDefaultAsync(m => m.BookId == id);
+        
         if (book == null)
         {
             return NotFound();
@@ -148,11 +142,17 @@ public class BookManagerController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateAuthor([Bind("FirstName,LastName")] Author author)
     {
-        if (ModelState.IsValid)
+        try
         {
             _context.Add(author);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+        catch (DbUpdateException)
+        {
+            ModelState.AddModelError("", "Unable to save changes. " +
+                                         "Try again, and if the problem persists " +
+                                         "see your system administrator.");
         }
         return View(author);
     }
@@ -168,11 +168,17 @@ public class BookManagerController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreatePublisher([Bind("Name")] Publisher publisher)
     {
-        if (ModelState.IsValid)
+        try
         {
             _context.Add(publisher);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+        catch (DbUpdateException)
+        {
+            ModelState.AddModelError("", "Unable to save changes. " +
+                                         "Try again, and if the problem persists " +
+                                         "see your system administrator.");
         }
         return View(publisher);
     }
