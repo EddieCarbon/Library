@@ -36,11 +36,11 @@ Sprawdź, czy masz zainstalowane wymagane oprogramowanie, takie jak .NET 6.X.X i
 1. Sklonuj repozytorium z projektem.
    - `https://github.com/EddieCarbon/Library.git`
 2. Skonfiguruj Łańcuch Połączenia z Bazą Danych w pliku appsettings.json.
-   - `cd Library`
-3. Używając konsoli menagera paczek NuGet utwórz bazę danych korzystając z migracji.
-   - `Update-Database` 
-5. Uruchom migracje bazy danych.
-   - `dotnet run`
+   - [Konfiguracja](#konfiguracja)
+3. Uruchom migracje bazy danych korzystając z managera paczek NuGet.
+   - `Update-Database`
+4. Uruchom program korzystając z konsoli.
+   - `dotnet run` 
 
 
 # Konfiguracja
