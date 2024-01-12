@@ -81,43 +81,37 @@ public class BookManagerController : Controller
             return NotFound();
         }
 
-        if (ModelState.IsValid)
+        try
         {
-            try
+            // Pobierz oryginalną książkę z bazy danych
+            var originalBook = await _context.Books
+                .Include(b => b.Author)
+                .Include(b => b.Publisher)
+                .FirstOrDefaultAsync(b => b.BookId == book.BookId);
+
+            if (originalBook == null)
             {
-                // Pobierz oryginalną książkę z bazy danych
-                var originalBook = await _context.Books
-                    .Include(b => b.Author)
-                    .Include(b => b.Publisher)
-                    .FirstOrDefaultAsync(b => b.BookId == book.BookId);
-
-                if (originalBook == null)
-                {
-                    return NotFound();
-                }
-
-                // Zaktualizuj właściwości książki na podstawie przekazanego modelu
-                originalBook.Title = book.Title;
-                originalBook.AuthorId = book.AuthorId;
-                originalBook.PublisherId = book.PublisherId;
-
-                // Zaktualizuj powiązane encje (Author i Publisher)
-                _context.Update(originalBook);
-                await _context.SaveChangesAsync();
+                return NotFound();
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BookExists(book.BookId))
-                {
-                    return NotFound();
-                }
-                throw;
-            }
-            return RedirectToAction(nameof(Index));
+
+            // Zaktualizuj właściwości książki na podstawie przekazanego modelu
+            originalBook.Title = book.Title;
+            originalBook.AuthorId = book.AuthorId;
+            originalBook.PublisherId = book.PublisherId;
+
+            // Zaktualizuj powiązane encje (Author i Publisher)
+            _context.Update(originalBook);
+            await _context.SaveChangesAsync();
         }
-
-        // Jeśli ModelState.IsValid jest false, to zwracamy użytkownika z powrotem do formularza edycji
-        return View(book);
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!BookExists(book.BookId))
+            {
+                return NotFound();
+            }
+            throw;
+        }
+        return RedirectToAction(nameof(Index));
     }
 
 
