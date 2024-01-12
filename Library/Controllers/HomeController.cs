@@ -60,7 +60,6 @@ public class HomeController : Controller
         {
             // Przekieruj do strony logowania
             return RedirectToPage("/Account/Login", new { area = "Identity" });
-            
         }
 
         // Sprawdź, czy książka jest już wypożyczona przez tego użytkownika
